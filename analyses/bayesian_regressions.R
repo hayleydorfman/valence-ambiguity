@@ -19,7 +19,7 @@ library(brms)
 source(here("SEM.R"))
 
 # ── Load behavioral data ───────────────────────────────────────────────────────
-df <- read.csv(here("data", "df_behav_exp1.csv"))
+df <- read.csv(here("data", "data_exp1.csv"))
 
 # ── Data prep: lags and counterfactual feedback ────────────────────────────────
 df <- df %>%
