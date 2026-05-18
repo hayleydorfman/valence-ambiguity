@@ -6,8 +6,8 @@
 #   figures/beliefs_5panel_p16.pdf
 #
 # Requires:
-#   data/df_numeric_pilot_16_acc.csv
-#   data/model_df_p16_exp56.csv
+#   data/df_behav_exp1.csv
+#   data/model_df_exp1.csv
 #   plot_themes.R, save_plot.R, SEM.R
 
 library(here)
@@ -180,8 +180,8 @@ make_belief_df <- function(data_df, model_df, belief_col) {
 # It was originally produced from raw MATLAB output files; the processed version
 # is provided directly so users do not need to re-run the MATLAB pipeline.
 
-model_df <- read.csv(here("data", "model_df_p16_exp56.csv"))
-df       <- read.csv(here("data", "df_numeric_pilot_16_acc.csv"))
+model_df <- read.csv(here("data", "model_df_exp1.csv"))
+df       <- read.csv(here("data", "df_behav_exp1.csv"))
 
 df$subject <- rep(seq_len(length(unique(df$subject_id))), each = 60)
 
