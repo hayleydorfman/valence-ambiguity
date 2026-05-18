@@ -1,6 +1,4 @@
-[readMe_github.md](https://github.com/user-attachments/files/27956111/readMe_github.md)
-# valence-ambiguity
-Data and analysis, task, and model code for Dorfman &amp; Bhui, 2026
+# Ambiguity and Confirmatory Reward Learning
 
 ## Citations
 
@@ -34,6 +32,11 @@ Computational model code for Dorfman & Bhui, 2026
 | `load_data.m` | Reads the behavioral CSV into a per-subject struct |
 | `lik_unambigcounter_*.m` | Likelihood functions for Experiment 1 (10 models) |
 | `lik_ambigcounter_*.m` | Likelihood functions for Experiment 2 (9 models) |
+| `run_model_recovery.m` | Model recovery for Experiment 1 |
+| `run_model_recovery_ambigcounter.m` | Model recovery for Experiment 2 |
+| `plot_model_recovery.m` | Plots model- and family-level confusion matrices |
+| `plot_prior_dispersion_scatter_only.m` | Plots true prior dispersion vs ΔAIC |
+| `run_parameter_recovery.m` | Parameter recovery plots and stats for any generator/model pair |
 
 ### Data files
 
@@ -77,7 +80,7 @@ data = load_data('df_behav_exp1.csv');
 [results, bms_results] = fit_models(1);
 ```
 
-#### Model fitting (Experiment 1)
+#### Models fit (Experiment 1)
 
 Ten models are fit in order. The index corresponds to the position in `results`.
 
@@ -133,6 +136,97 @@ OUT_DIR = './model_output_csvs';
 The script writes one CSV per subject to that folder (`1_modeloutput.csv`, `2_modeloutput.csv`, ...). Each CSV has a header row and one row per trial.
 
 These CSVs are the input to the R plotting scripts (`plot_learning_curves_beliefs.R`, `plot_behave_beliefs.R`, `plot_PXP.R`). Concatenate the per-subject files and add the header before reading into R.
+
+### Model recovery
+
+Model recovery tests whether the fitting procedure can correctly identify the true generating model when data are simulated from each model in the candidate set.
+
+| File | Purpose |
+|------|---------|
+| `run_model_recovery.m` | Runs model recovery for Experiment 1 (10 models, `lik_unambigcounter_*`) |
+| `run_model_recovery_ambigcounter.m` | Runs model recovery for Experiment 2 (9 models, `lik_ambigcounter_*`) |
+| `plot_model_recovery.m` | Loads a saved workspace and plots model-level and family-level confusion matrices |
+| `plot_prior_dispersion_scatter_only.m` | Scatter plot of true prior dispersion vs ΔAIC for the 3-prior Bayesian generator |
+
+**How it works:** For each of the 10 (or 9) models, 100 synthetic datasets are simulated using parameters drawn from the same priors used for fitting. All models are then fit to every simulated dataset and the winning model is selected by AIC. The result is a confusion matrix where rows are the true generating model and columns are the winning fitted model. Diagonal entries indicate correct recovery.
+
+**To run model recovery for Experiment 1:**
+
+```matlab
+run_model_recovery        % saves workspace_YYYYMMDD_HHMMSS.mat to results_model_recovery_*/
+```
+
+**To run model recovery for Experiment 2:**
+
+```matlab
+run_model_recovery_ambigcounter   % saves workspace_YYYYMMDD_HHMMSS.mat to results_model_recovery_ambigcounter_*/
+```
+
+Key settings at the top of each script:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `n_synth_per_gen` | 100 | Synthetic datasets per generating model |
+| `tpb` | 10 | Trials per block |
+| `n_blocks` | 6 | Number of blocks |
+| `restarts` | 10 | Random starts for MAP optimization |
+| `criterion` | `'AIC'` | Model selection criterion (`'AIC'` or `'BIC'`) |
+| `use_parallel` | `true` | Use Parallel Computing Toolbox (recommended) |
+
+**To plot confusion matrices** after running, edit the `MAT_FILE`, `OUTPUT_FILE`, and `OUTPUT_FILE_FAM` paths at the top of `plot_model_recovery.m` and run it. It produces two PDFs: a model-level confusion matrix and a family-level confusion matrix (collapsing across RL, Bayesian, and 2LR model families).
+
+**To plot prior dispersion vs ΔAIC** (for the 3-prior Bayesian generator only):
+
+```matlab
+plot_prior_dispersion_scatter_only('path/to/workspace.mat', 'avgabs', 'output.pdf')
+```
+
+The `metric` argument controls how prior dispersion is quantified: `'avgabs'` (mean absolute pairwise difference between prior means, default) or `'maxmin'` (max minus min prior mean).
+
+**Expected runtime:** Several hours with `use_parallel = true` (10 restarts × 100 datasets × 10 models). Plan for overnight runs on a standard laptop.
+
+### Parameter recovery
+
+Parameter recovery tests whether the true parameter values used to simulate data can be accurately recovered by the fitting procedure, for each model individually.
+
+**To run parameter recovery** after completing model recovery, load the saved workspace and call `run_parameter_recovery` for each generator:
+
+```matlab
+workspace_path = 'results_model_recovery_10tpb_6blocks_10models/workspace_YYYYMMDD_HHMMSS.mat';
+exp_name       = 'exp1_param_recovery';
+
+S     = load(workspace_path);
+Kmods = numel(S.labels);
+
+for g = 1:Kmods
+    run_parameter_recovery(workspace_path, g, g, exp_name);
+end
+```
+
+For Experiment 2, point to the `ambigcounter` workspace instead:
+
+```matlab
+workspace_path = 'results_model_recovery_ambigcounter_10tpb_6blocks_9models/workspace_YYYYMMDD_HHMMSS.mat';
+exp_name       = 'exp2_param_recovery';
+```
+
+```matlab
+run_parameter_recovery(workspace_mat, g, m, outdir, param_names)
+```
+
+| Argument | Description |
+|----------|-------------|
+| `workspace_mat` | Path to the `.mat` file from `run_model_recovery` |
+| `g` | Generator index (row of the confusion matrix) |
+| `m` | Model index to evaluate (default = `g`, i.e. the matched model) |
+| `outdir` | Output directory for plots and CSVs (optional; auto-named if omitted) |
+| `param_names` | Cell array of parameter name strings (optional; inferred from workspace if available) |
+
+**Outputs** are saved to the specified output directory:
+
+- `param_recovery_g##_<model>__m##_<model>.png` — scatter plots of true vs recovered values for each parameter, with Pearson r and regression slope annotated
+- `param_recovery_g##_<model>__m##_<model>.fig` — same figure as an editable MATLAB .fig file
+- `param_recovery_stats_g##_<model>__m##_<model>.csv` — table of Pearson r, slope, intercept, and RMSE per parameter
 
 ---
 
@@ -260,11 +354,9 @@ Task code for Dorfman & Bhui, 2026
 
 The behavioral tasks used for both experiments in the paper are provided here. They were created using Josh deLeeuw's [jsPsych toolbox](http://www.jspsych.org/).
 
-Both tasks will not run "out of the box" because they require communication with a PHP server. You can achieve this by running them on your own domain, or by using a tool like XAMPP to run the PHP server locally. You could also use an easy-to-use experiment hosting service — a recommended option is [Cognition](https://www.cognition.run/).
+Both tasks will not run "out of the box" because they require communication with a PHP server. You can achieve this by running them on your own domain, or by using a tool like XAMPP to run the PHP server locally. You could also use an easy-to-use experiment hosting service — a recommended option is [Cognition](https://www.cognition.run/). The 'img' folder needs to be included in the same folder you use to run the html file from. Images are the same for both experiments.
 
-Please also note that slight modifications may need to be made to the existing code to either run the task locally or on a hosting service. For example, the consent and data save functions will need to be commented out in order to run the task locally (if you do not have PHP capabilities). The 'img' folder will need to be moved to the same folder you are running the html file from. Images are the same for both experiments.
-
-For more information on running online jsPsych experiments, please see the extensive documentation available on the jsPsych website, Github discussion forum, and particularly [here](https://www.jspsych.org/overview/running-experiments/).
+Please also note that slight modifications may need to be made to the existing code to either run the task locally or on a hosting service. For example, the consent and data save functions will need to be commented out in order to run the task locally (if you do not have PHP capabilities). For more information on running online jsPsych experiments, please see the extensive documentation available on the jsPsych website, Github discussion forum, and particularly [here](https://www.jspsych.org/overview/running-experiments/).
 
 ---
 
