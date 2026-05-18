@@ -8,8 +8,8 @@
 # saveRDS(model, here("models", "model_name.rds")) calls if you want to cache them.
 #
 # Requires:
-#   data/df_numeric_pilot_16_acc.csv
-#   data/model_df_p16_exp56.csv
+#   data/df_behav_exp1.csv
+#   data/model_df_exp1.csv
 #   SEM.R (for sem helper, if needed downstream)
 
 library(here)
@@ -19,7 +19,7 @@ library(brms)
 source(here("SEM.R"))
 
 # ── Load behavioral data ───────────────────────────────────────────────────────
-df <- read.csv(here("data", "df_numeric_pilot_16_acc.csv"))
+df <- read.csv(here("data", "df_behav_exp1.csv"))
 
 # ── Data prep: lags and counterfactual feedback ────────────────────────────────
 df <- df %>%
@@ -79,7 +79,7 @@ round(colMeans(drawsmax[names(drawsmax)[grep("b_", names(drawsmax))]] > 0), 3)
 
 # ── Regression 2: stay/switch for negative outcomes ~ loss magnitude ───────────
 # Uses model output data to get trial-level feedback
-model_df <- read.csv(here("data", "model_df_p16_exp56.csv"))
+model_df <- read.csv(here("data", "model_df_exp1.csv"))
 
 df2 <- model_df %>%
   arrange(subject, block) %>%
