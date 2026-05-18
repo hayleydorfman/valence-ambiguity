@@ -1,7 +1,7 @@
 # ── Bayesian regressions ───────────────────────────────────────────────────────
 # Runs two sets of Bayesian logistic regressions using brms:
-#   1. Stay/switch behavior after ambiguous trials (Rahul Bhui)
-#   2. Order effects: does prior block condition influence current behavior? (Hayley Dorfman)
+#   1. Stay/switch behavior after ambiguous trials
+#   2. Order effects: does prior block condition influence current behavior?
 #
 # Note: brms models can take several minutes to hours to fit depending on your
 # machine. Fitted model objects are not saved automatically; add
