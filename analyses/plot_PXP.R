@@ -5,7 +5,7 @@
 #   figures/fig6_model_comparison.pdf – combined manuscript figure 6
 #
 # Requires:
-#   data/model_df_p16_exp56.csv
+#   data/model_df_exp1.csv
 #   plot_themes.R, save_plot.R, SEM.R
 
 library(here)
@@ -23,7 +23,7 @@ dir.create(here("figures"), showWarnings = FALSE)
 sem <- function(x) sd(x, na.rm = TRUE) / sqrt(sum(!is.na(x)))
 
 # ── Load data ──────────────────────────────────────────────────────────────────
-model_df <- read.csv(here("data", "model_df_p16_exp56.csv"))
+model_df <- read.csv(here("data", "model_df_exp1.csv"))
 
 # ── Identify winning model per subject ────────────────────────────────────────
 model_df <- model_df %>%
