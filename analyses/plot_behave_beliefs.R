@@ -6,8 +6,8 @@
 #   figures/fig_belief_bar_truth.pdf
 #
 # Requires:
-#   data/df_numeric_pilot_16_acc.csv
-#   data/model_df_p16_exp56.csv
+#   data/df_exp1.csv
+#   data/model_df_exp1.csv
 #   plot_themes.R, SEM.R
 
 library(here)
@@ -142,8 +142,8 @@ make_belief_truth_df <- function(data_df) {
 }
 
 # ── Load data ──────────────────────────────────────────────────────────────────
-df       <- read.csv(here("data", "df_numeric_pilot_16_acc.csv"))
-model_df <- read.csv(here("data", "model_df_p16_exp56.csv"))
+df       <- read.csv(here("data", "df_behav_exp1.csv"))
+model_df <- read.csv(here("data", "model_df_exp1.csv"))
 
 df$subject <- rep(seq_len(length(unique(df$subject_id))), each = 60)
 
