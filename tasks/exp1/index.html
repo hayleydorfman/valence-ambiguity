@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My experiment</title>
+    <script src="jspsych-6.3.0/jspsych.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-survey-multi-choice.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-html-button-response-hd.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-canvas-button-response.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-call-function.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-image-button-response.js"></script>
+    <script src="jspsych-6.3.0/plugins/jspsych-fullscreen.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+    <link href="jspsych-6.3.0/css/jspsych.css" rel="stylesheet" type="text/css">
+  </head>
+  <body></body>
+<script>
+
+
+
+// Confirmation bias task
+// 2021
+// Prime manipulation: random order of rich, poor, and neutral blocks
+// Hayley Dorfman
+
+
+var timeline = [];
+
+
+/*define image order*/
+var all_mine_images = ["img/teal_mine.png","img/teal2_mine.png","img/green2_mine.png",
+"img/purp2_mine.png","img/lavender_mine.png",
+"img/orange3_mine.png",
+"img/pink1_mine.png","img/pink2_mine.png","img/red_mine.png",
+"img/yellow_mine.png","img/gray_mine.png",
+"img/blue_mine.png","img/cobalt_mine.png"]
+
+var all_images = ["img/teal_mine.png","img/teal2_mine.png","img/green2_mine.png",
+"img/purp2_mine.png","img/lavender_mine.png",
+"img/orange3_mine.png", "img/outcome_example.png",
+"img/pink1_mine.png","img/pink2_mine.png","img/red_mine.png",
+"img/yellow_mine.png","img/gray_mine.png", "img/rocks_example.png", "img/dirty_small.png", "img/rock_small.png", "img/gold_small.png",
+"img/dig_example.png", "img/saloon_gold.png", "img/saloon_rocks.png", "img/saloon_unknown.png", "img/rich_territory.png", "img/poor_territory.png", "img/unknown_territory.png",
+"img/blue_mine.png","img/cobalt_mine.png", 'img/dirty_small_num.png', 'img/rock_small_num.png', 'img/gold_small_num.png']
+
+	//shuffle mine_images
+var mine_image = jsPsych.randomization.shuffle(all_mine_images)
+
+
+var outcome_blank = "img/outcome_blank.png";
+
+//define territory manipulations
+
+	var envir_array = ["rich", "poor", "neutral", "rich", "poor", "neutral"]
+	var envir = jsPsych.randomization.shuffle(envir_array)
+
+
+
+  function repeatSimple(element, times)
+  {
+      var result = [];
+      for(var i=0;i<times;i++)
+        result.push(element);
+      return result;
+  }
+
+  //create all arrays for trial outcomes
+
+  var n_normal_trials = 5;
+  var n_ambig_trials = 5; //10 trials of each; 20 trials per block; 120 trials total
+  var n_trials_block = n_normal_trials + n_ambig_trials;
+
+  //create trial arrays
+  var ones = repeatSimple(1,n_ambig_trials);
+  var zeros = repeatSimple(0,n_normal_trials);
+  var latent_array = ones.concat(zeros)
+
+
+
+
+//mean +3, sd 2 for mine 1; mean -3, sd 2 for mine 2
+
+// ambiguous and nonambiguous trial arrays for each arm (L&R)
+
+
+
+    var feedback_type_b1 = jsPsych.randomization.shuffle(latent_array) //shuffle trial order; block 1
+
+    var feedback_type_b2 = jsPsych.randomization.shuffle(latent_array) //shuffle trial order; block 2
+
+    var feedback_type_b3 = jsPsych.randomization.shuffle(latent_array) //shuffle trial order; block 3
+
+
+        var feedback_type_b4 = jsPsych.randomization.shuffle(latent_array) //shuffle trial order; block 4
+
+        var feedback_type_b5 = jsPsych.randomization.shuffle(latent_array) //shuffle trial order; block 5
+
+        var feedback_type_b6 = jsPsych.randomization.shuffle(latent_array) //shuffle trial order; block 6
+
+
+
+//what will the feedback magnitude for each trial, each mine, be?
+
+  var feedback_magnitude_b1_arm1 = [];
+  var feedback_magnitude_b2_arm1 = [];
+  var feedback_magnitude_b3_arm1 = [];
+  var feedback_magnitude_b4_arm1 = [];
+  var feedback_magnitude_b5_arm1 = [];
+  var feedback_magnitude_b6_arm1 = [];
+
+  var feedback_magnitude_b1_arm2 = [];
+  var feedback_magnitude_b2_arm2 = [];
+  var feedback_magnitude_b3_arm2 = [];
+  var feedback_magnitude_b4_arm2 = [];
+  var feedback_magnitude_b5_arm2 = [];
+  var feedback_magnitude_b6_arm2 = [];
+
+
+  var feedback_magnitude_b1_arm1a = [];
+  var feedback_magnitude_b2_arm1a = [];
+  var feedback_magnitude_b3_arm1a = [];
+  var feedback_magnitude_b4_arm1a = [];
+  var feedback_magnitude_b5_arm1a = [];
+  var feedback_magnitude_b6_arm1a = [];
+
+  var feedback_magnitude_b1_arm2a = [];
+  var feedback_magnitude_b2_arm2a = [];
+  var feedback_magnitude_b3_arm2a = [];
+  var feedback_magnitude_b4_arm2a = [];
+  var feedback_magnitude_b5_arm2a = [];
+  var feedback_magnitude_b6_arm2a = [];
+
+  var feedback_magnitude_b1_arm1_sign = [];
+  var feedback_magnitude_b2_arm1_sign = [];
+  var feedback_magnitude_b3_arm1_sign = [];
+  var feedback_magnitude_b4_arm1_sign = [];
+  var feedback_magnitude_b5_arm1_sign = [];
+  var feedback_magnitude_b6_arm1_sign = [];
+
+  var feedback_magnitude_b1_arm2_sign = [];
+  var feedback_magnitude_b2_arm2_sign = [];
+  var feedback_magnitude_b3_arm2_sign = [];
+  var feedback_magnitude_b4_arm2_sign = [];
+  var feedback_magnitude_b5_arm2_sign = [];
+  var feedback_magnitude_b6_arm2_sign = [];
+
+  //randomize which arm will have which mean - use this for a fixed mean
+   var means = jsPsych.randomization.shuffle([10, -10]); //each arm will be either -10 or 10
+
+   //var stddevs = jsPsych.randomization.shuffle([10, 20, 30, 40]); //all possible sds
+   var stddevs = jsPsych.randomization.shuffle([10, 10, 10, 10]); //all possible sds
+   var stddev = stddevs[0]; //this is what this subject's SD will be across whole task
+//
+// // means are defined above, SD is 20
+  for (var i = 0; i < n_trials_block; i++) {
+  		feedback_magnitude_b1_arm1.push(jStat.normal.sample(means[0], stddev)); //left
+  		feedback_magnitude_b2_arm1.push(jStat.normal.sample(means[1], stddev)); //left
+  		feedback_magnitude_b3_arm1.push(jStat.normal.sample(means[0], stddev)); //left
+      feedback_magnitude_b4_arm1.push(jStat.normal.sample(means[0], stddev)); //left
+      feedback_magnitude_b5_arm1.push(jStat.normal.sample(means[1], stddev)); //left
+      feedback_magnitude_b6_arm1.push(jStat.normal.sample(means[0], stddev)); //left
+
+      feedback_magnitude_b1_arm2.push(jStat.normal.sample(means[1], stddev)); //right
+      feedback_magnitude_b2_arm2.push(jStat.normal.sample(means[0], stddev)); //right
+      feedback_magnitude_b3_arm2.push(jStat.normal.sample(means[1], stddev)); //right
+      feedback_magnitude_b4_arm2.push(jStat.normal.sample(means[1], stddev)); //right
+      feedback_magnitude_b5_arm2.push(jStat.normal.sample(means[0], stddev)); //right
+      feedback_magnitude_b6_arm2.push(jStat.normal.sample(means[1], stddev)); //right
+  }
+
+  //randomize which arm will have which mean - use this for a more random mean
+//   var stddev_means = 10;
+//   var mean_means = 0;
+//   var mean1 = jStat.normal.sample(mean_means, stddev_means)
+//   var mean2 = jStat.normal.sample(mean_means, stddev_means)
+//   var mean3 = jStat.normal.sample(mean_means, stddev_means)
+//   var mean4 = jStat.normal.sample(mean_means, stddev_means)
+//   var mean5 = jStat.normal.sample(mean_means, stddev_means)
+//   var mean6 = jStat.normal.sample(mean_means, stddev_means)
+//
+//
+//   if (mean1==mean4) {
+//    mean1 = mean1 +1
+// };
+//
+//
+//   if (mean2==mean5) {
+//    mean2 = mean2 +1
+//   };
+//
+//
+//     if (mean3==mean6) {
+//      mean3 = mean3 +1
+//     };
+//
+//   //var means = jsPsych.randomization.shuffle([0, 0]); //
+//   var stddev = 10;
+//
+// // means are defined above, SD is 20
+//   for (var i = 0; i < n_trials_block; i++) {
+//   		feedback_magnitude_b1_arm1.push(jStat.normal.sample(mean1, stddev)); //left
+//   		feedback_magnitude_b2_arm1.push(jStat.normal.sample(mean2, stddev)); //left
+//   		feedback_magnitude_b3_arm1.push(jStat.normal.sample(mean3, stddev)); //left
+//       feedback_magnitude_b1_arm2.push(jStat.normal.sample(mean4, stddev)); //right
+//       feedback_magnitude_b2_arm2.push(jStat.normal.sample(mean5, stddev)); //right
+//       feedback_magnitude_b3_arm2.push(jStat.normal.sample(mean6, stddev)); //right
+//   }
+
+
+  //final outcomes for each of 60 trials per block, 180 total
+  var x = 0;
+  var len = feedback_magnitude_b1_arm1.length
+  while(x < len){
+      feedback_magnitude_b1_arm1a[x] = Math.round(feedback_magnitude_b1_arm1[x]);
+  		feedback_magnitude_b2_arm1a[x] = Math.round(feedback_magnitude_b2_arm1[x]);
+  		feedback_magnitude_b3_arm1a[x] = Math.round(feedback_magnitude_b3_arm1[x]);
+      feedback_magnitude_b4_arm1a[x] = Math.round(feedback_magnitude_b4_arm1[x]);
+      feedback_magnitude_b5_arm1a[x] = Math.round(feedback_magnitude_b5_arm1[x]);
+      feedback_magnitude_b6_arm1a[x] = Math.round(feedback_magnitude_b6_arm1[x]);
+      feedback_magnitude_b1_arm2a[x] = Math.round(feedback_magnitude_b1_arm2[x]);
+      feedback_magnitude_b2_arm2a[x] = Math.round(feedback_magnitude_b2_arm2[x]);
+      feedback_magnitude_b3_arm2a[x] = Math.round(feedback_magnitude_b3_arm2[x]);
+      feedback_magnitude_b4_arm2a[x] = Math.round(feedback_magnitude_b4_arm2[x]);
+      feedback_magnitude_b5_arm2a[x] = Math.round(feedback_magnitude_b5_arm2[x]);
+      feedback_magnitude_b6_arm2a[x] = Math.round(feedback_magnitude_b6_arm2[x]);
+      x++
+  }
+
+  //resample if there are zero values
+  function getAllIndices(arr, val) {
+      var indexes = [], i;
+      for(i = 0; i < arr.length; i++)
+          if (arr[i] === val)
+              indexes.push(i);
+      return indexes;
+  }
+
+
+
+  var new_values = jsPsych.randomization.shuffle([1, 1, 1, 1, 1, 1, -1, -1, -1, -1, -1, -1]);
+
+feedback_magnitude_b1_arm1a = feedback_magnitude_b1_arm1a.map(item=>item==0 ? new_values[0] : item);
+feedback_magnitude_b1_arm2a = feedback_magnitude_b1_arm2a.map(item=>item==0 ? new_values[1] : item);
+feedback_magnitude_b2_arm1a = feedback_magnitude_b2_arm1a.map(item=>item==0 ? new_values[2] : item);
+feedback_magnitude_b2_arm2a = feedback_magnitude_b2_arm2a.map(item=>item==0 ? new_values[3] : item);
+feedback_magnitude_b3_arm1a = feedback_magnitude_b3_arm1a.map(item=>item==0 ? new_values[4] : item);
+feedback_magnitude_b3_arm2a = feedback_magnitude_b3_arm2a.map(item=>item==0 ? new_values[5] : item);
+feedback_magnitude_b4_arm1a = feedback_magnitude_b4_arm1a.map(item=>item==0 ? new_values[6] : item);
+feedback_magnitude_b4_arm2a = feedback_magnitude_b4_arm2a.map(item=>item==0 ? new_values[7] : item);
+feedback_magnitude_b5_arm1a = feedback_magnitude_b5_arm1a.map(item=>item==0 ? new_values[8] : item);
+feedback_magnitude_b5_arm2a = feedback_magnitude_b5_arm2a.map(item=>item==0 ? new_values[9] : item);
+feedback_magnitude_b6_arm1a = feedback_magnitude_b6_arm1a.map(item=>item==0 ? new_values[10] : item);
+feedback_magnitude_b6_arm2a = feedback_magnitude_b6_arm2a.map(item=>item==0 ? new_values[11] : item);
+
+
+
+
+
+  // if you want decimals do this:
+  // var x = 0;
+  // var len = feedback_magnitude_b1_arm1.length
+  // while(x < len){
+  //     feedback_magnitude_b1_arm1a[x] = Math.round(feedback_magnitude_b1_arm1[x]*100)/100;
+  //     feedback_magnitude_b2_arm1a[x] = Math.round(feedback_magnitude_b2_arm1[x]*100)/100;
+  //     feedback_magnitude_b3_arm1a[x] = Math.round(feedback_magnitude_b3_arm1[x]*100)/100;
+  //     feedback_magnitude_b1_arm2a[x] = Math.round(feedback_magnitude_b1_arm2[x]*100)/100;
+  //     feedback_magnitude_b2_arm2a[x] = Math.round(feedback_magnitude_b2_arm2[x]*100)/100;
+  //     feedback_magnitude_b3_arm2a[x] = Math.round(feedback_magnitude_b3_arm2[x]*100)/100;
+  //     x++
+  // }
+
+
+
+  var x = 0;
+  var len = feedback_magnitude_b1_arm1.length
+  while(x < len){
+      feedback_magnitude_b1_arm1_sign[x] = Math.sign(feedback_magnitude_b1_arm1a[x]);
+      feedback_magnitude_b2_arm1_sign[x] = Math.sign(feedback_magnitude_b2_arm1a[x]);
+      feedback_magnitude_b3_arm1_sign[x] = Math.sign(feedback_magnitude_b3_arm1a[x]);
+      feedback_magnitude_b4_arm1_sign[x] = Math.sign(feedback_magnitude_b4_arm1a[x]);
+      feedback_magnitude_b5_arm1_sign[x] = Math.sign(feedback_magnitude_b5_arm1a[x]);
+      feedback_magnitude_b6_arm1_sign[x] = Math.sign(feedback_magnitude_b6_arm1a[x]);
+      feedback_magnitude_b1_arm2_sign[x] = Math.sign(feedback_magnitude_b1_arm2a[x]);
+      feedback_magnitude_b2_arm2_sign[x] = Math.sign(feedback_magnitude_b2_arm2a[x]);
+      feedback_magnitude_b3_arm2_sign[x] = Math.sign(feedback_magnitude_b3_arm2a[x]);
+      feedback_magnitude_b4_arm2_sign[x] = Math.sign(feedback_magnitude_b4_arm2a[x]);
+      feedback_magnitude_b5_arm2_sign[x] = Math.sign(feedback_magnitude_b5_arm2a[x]);
+      feedback_magnitude_b6_arm2_sign[x] = Math.sign(feedback_magnitude_b6_arm2a[x]);
+      x++
+  }
+
+
+
+
+
+      //Load images for practice
+      var preload_images1 = {
+      type: "call-function",
+      async: true,
+      func: function(done) {
+        jsPsych.getDisplayElement().innerHTML = '<p>Loading... Please wait.</p>'
+        jsPsych.pluginAPI.preloadImages(all_images, function() {
+          done({ preload: "success" });
+        })
+      }
+    };
+      timeline.push(preload_images1)
+
+
+  var fullscreen_intro = {
+      type: 'instructions',
+      pages: [
+        "<p>On the next screen you will be asked to put your browser in full screen mode.</p>" +
+        "<p>After entering full screen mode it is very important that you do not exit, switch tabs, minimize, or adjust the browser for the remainder of the game.</p>" +
+        "<p>Doing so changes the display of the game and the game does not pause once started.</p>" +
+        "<p>We can detect if you exit fullscreen, minimize the window, or switch to another tab, and we reserve the right to withold your bonus if this is indicated.</p>",
+        ],
+     show_clickable_nav: true,
+     on_finish: function(data) {
+      jsPsych.data.addDataToLastTrial({
+        exp_stage:"fullscreen",
+        exp_part: "fullscreen"
+      })
+    }
+  };
+  timeline.push(fullscreen_intro)
+
+  var fullscreen = {
+    type: 'fullscreen',
+    fullscreen_mode: true,
+    on_finish: function(data) {
+      jsPsych.data.addDataToLastTrial({
+        exp_stage:"fullscreen",
+        exp_part: "fullscreen"
+      })
+    }
+  };
+timeline.push(fullscreen)
+
+
+	/* define landing page block */
+
+	var landing_page = {
+		type: 'instructions',
+		pages: [
+			"<p class='center-content'> Welcome!</p>"+
+			"<p class='center-content'> In this study, you will first play a game that should take about 10-15 minutes.</p>"+
+			"<p class='center-content'> Then, you will answer some questions about yourself. That part of the study will take 5 minutes or less.</p>"+
+			"<p class='center-content'> You must complete both the game and the surveys to get approved for this study.</p>",
+			"<p class='center-content'> You will earn $2 plus a possible bonus for completing this study.</p>"+
+			"<p class='center-content'> Press 'Next' to learn about the game.</p>",
+		],
+		show_clickable_nav: true,
+		screen_color: function(){
+			document.documentElement.style.background = "White";
+		}
+
+	};
+
+//	timeline.push(landing_page)
+
+
+
+
+		/* define instructions block */
+		var task_instructions = {
+		type: 'instructions',
+		pages: [
+				"<p class='center-content'> Welcome to the Wild West Game!</p>"+
+				"<p class='center-content'> In this game, imagine you're a gold miner in the Wild West.</p>",
+				"<p class='center-content'> At the start of each new round, you will mine at a different location.</p>"+
+        "<p class='center-content'> You will have to choose between two mines to dig in.</p>"+
+        "<p class='center-content'> Each of the two mines has a different chance of giving you gold, and one might be better than the other.</p>",
+				"<p class='center-content'> To choose a mine, click the button on the screen below the mine you want to dig in."+
+				"<p class='center-content'><img src='img/dig_example.png'></img>",
+				"<p class='center-content'> After you choose a mine, you will receive an outcome.</p>"+
+				"<p class='center-content'> There are two types of outcomes: gold or rocks.</p>"+
+        "<p class='center-content'> You will get a certain amount of gold or rocks on each trial, and you will see the number of ounces you received.</p>"+
+        "<p class='center-content'><img src='img/outcome_example.png'></img>",
+        "<p class='center-content'> After you dig in a mine, you will see the outcome for both of the mine options. The green line will indicate which mine you picked.</p>"+
+        "<p class='center-content'> The outcome with the green line under it is what you will actually receive. The other outcome is shown to help you learn.</p>"+
+        "<p class='center-content'><img src='img/full_outcome_example.png'></img>",
+				"<p class='center-content'> Gold is very valuable, so getting more gold is better. But rocks are worthless and heavy to carry, so getting more rocks is worse.</p>"+
+        "<p class='center-content'> Your goal is to get as much gold as possible and as few rocks as possible.</p>"+
+        "<p class='center-content'> You will <b>get real bonus money</b> each time you mine <b>GOLD</b>.</p>"+
+				"<p class='center-content'> You will <b>lose real bonus money</b> each time you mine <b>ROCKS</b>.</p>",
+				"<p class='center-content'> However, sometimes the outcome you receive will be <b>covered in dirt</b> and you won't know what it is.</p>"+
+        "<p class='center-content'> It could be gold (a good outcome), or it could be rocks (a bad outcome).</p>"+
+				"<p class='center-content'> A dirty outcome will look like this:"+
+				"<p class='center-content'><img src='img/dirty_small_num.png'></img>",
+				"<p class='center-content'> We won't show you what the dirty outcome is, but if it is gold, you will still win money, and if it is rocks, you will still lose money.</p>",
+        "<p class='center-content'> Each ounce of gold, rocks, or dirty outcome is equivalent to a small amount of bonus money.</p>"+
+        "<p class='center-content'> We will show you the amount you have won or lost each time you mine.</p>"+
+				"<p class='center-content'> Each time you get an outcome, we will ask you whether you think this outcome is gold or rocks.</p>"+
+				"<p class='center-content'> If you received gold, answer 'Gold', and if you received rocks, answer 'Rocks.'</p>"+
+				"<p class='center-content'> If you received a dirty outcome, it's OK to not know the answer, just <b>take your best guess</b>.</p>"+
+        "<p class='center-content'><img src='img/rocks_example.png'></img>",
+				"<p class='center-content'> To get you started, we will give you $2 worth of bonus money when you begin the game.</p>"+
+				"<p class='center-content'> This $2 is <b>REAL BONUS MONEY</b>.</p>"+
+				"<p class='center-content'> When you get gold, a small amount of real money will be <b>added</b> to this $2. But, when you get rocks, a small amount of real money will be <b>subtracted</b> from your total.</p>"+
+				"<p class='center-content'> You will not see your total bonus during the game. We will add up your winnings and show them to you <b>at the end of the game</b>. This amount is what you will receive in bonus money.</p>"+
+				"<p class='center-content'> However, if you end up with negative winnings, you will never owe us any money, you just will not receive any bonus money.</p>",
+				"<p class='center-content'> Before you start each round, you will dig in a new pair of mines, and will be told some general information about your mining conditions.</p>"+
+				"<p class='center-content'> This information is important, so please pay attention to it.</p>",
+        // Pg. 13 -- Comprehension instruction_questions
+        '<p class="center-content">On the next screen, you will be asked a series of questions about the game in order to make sure you understand it.</p>' +
+        '<p class="center-content"><br><b>If you answer any of the questions incorrectly, you be asked to read through the instructions and answer the questions again.</b></p>' +
+        '<p class="center-content">You will not be allowed to proceed with the game until you answer the questions correctly.</p>'+
+				"<p class='center-content'> If you want to review the instructions, you should do so now by clicking 'Previous'.</p>"
+
+
+
+		],
+		show_clickable_nav: true,
+		// on_start: function(){
+		// 	document.documentElement.style.backgroundImage = "url('img/instructions_patternonly_bg.jpg')";
+		// 	document.documentElement.style.backgroundSize = "cover";
+		// 	document.documentElement.style.backgroundRepeat = "no-repeat";
+		// }
+	};
+
+
+
+  // These are the comprehension questions for instructions.
+  var comprehension_questions = {
+    type:'survey-multi-choice',
+    questions: [
+      {prompt: "<b>What is your main goal in this game?</b>",
+        options: [
+          "-- To visit as many territories as possible.",
+          "-- To collect as much gold and as few rocks as possible.",
+          "-- To collect as many rocks and as little gold as possible."
+        ],
+        required: true
+      },
+      {prompt: "<b>What does it mean if you get a dirty outcome instead of gold or rocks?</b>",
+        options: [
+          '-- It means that I am in a bad territory and will have to wait to get to a good one.',
+          '-- It means that I am not doing well in the game, because a dirty outcome is worse than rocks.',
+          '-- It means that I will not know whether the dirty outcome is gold or rocks, but I will have to make a guess.',
+          '-- It means I did not win or lose any money, because a dirty outcome equals $0.'
+        ],
+        required: true
+      },
+      {prompt: "<b>True or False: If I receive a dirty outcome, I will still win or lose money on that trial depending on whether the dirty outcome is really gold or rocks.</b>",
+        options: [
+          "-- True",
+          "-- False"
+        ],
+        required: true
+      },
+    {prompt: "<b>When you enter a new territory, what will happen?</b>",
+      options: [
+        '-- I will mine in the same mines as the previous territory.',
+        '-- I will mine in a new pair of mines and receive extra bonus money.',
+        '-- I will answer questions about myself.',
+        '-- I will mine in a new pair of mines and will receive important information about the new territory.'
+      ],
+      required: true
+    },
+  ],
+    preamble: "<h3>Please answer the following questions.</h3>",
+
+    on_finish: function(data) {
+      jsPsych.data.addDataToLastTrial({
+        exp_stage:"comprehension_questions"
+      })
+    }
+  };
+
+  // This section evaluates the participant's answers to the comprehension questions and provides them with feedback as to whether or not they answered correctly.
+  // If the participant answers correctly, they will be asked to press the spacebar to continue on with the task.
+  // If the participant answers incorrectly, they will be asked to press the spacebar to return to the instructions and redo the questions.
+  // This is part of the instructions_understood section.
+  var comp_feedback = {
+    type: 'html-button-response',
+    stimulus: function(){
+      var last_trial_data = jsPsych.data.getLastTrialData().values()[0]; // This is all of the data from the comprehension questions trial.
+      //console.log(last_trial_data.response.Q0)
+      var answer_Q1 = last_trial_data.response.Q0; // This is the answer to the 1st comprehension question
+
+      var answer_Q2 = last_trial_data.response.Q1; // This is the answer to the 2nd comprehension question.
+      var answer_Q3 = last_trial_data.response.Q2; // This is the answer to the 3rd comprehension question.
+      var answer_Q4 = last_trial_data.response.Q3; // This is the answer to the 3rd comprehension question.
+      if(answer_Q1.includes('gold') == true && answer_Q2.includes('guess') == true && answer_Q3.includes('True') == true && answer_Q4.includes('important') == true) { // If all of the answers are correct...
+        return "<p align='center'>Great job! You answered all of the comprehension questions correctly.</p>";
+      } else { // If the all of the answers are not correct...
+        return "<p align='center'>Hmm...based on one or more of your answers to the previous questions, it looks as if you may not fully understand the game.</p>" + // ...return the "you answered incorrectly" feedback.
+        '<p align="center">Please press <b>Next</b> to return to the instructions and try again.</p>';
+      }
+    },
+    choices: ['Next'],
+    on_finish: function(data){ // This function uses the feedback from the comprehension questions to assign a label of "correct" to their data if they answered the comprehension questions correctly.
+      if(data.stimulus == "<p align='center'>Great job! You answered all of the comprehension questions correctly.</p>") {
+        data.correct = true; // ...then their data should be labeled as "correct".
+      } else { // If the participant does NOT see the "you answered correctly" feedback...
+        data.correct = false; // ...then their data should NOT be labeled as "correct".
+      }
+    }
+  };
+
+  // This section loops the instructions, comprehension questions & feedback until the participant answers correctly.
+  var instructions_understood = {
+    timeline: [task_instructions, comprehension_questions, comp_feedback], // The participant will see the instructions, comprehension questions, and feedback FIRST before the rest of this function is run.
+    loop_function: function(last_trial_data){
+      var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct; // This variable retrieves data from the last section regarding whether or not the participant's data was correct.
+      if(last_trial_correct){ // If the participant's data from the last trial was labeled "correct"...
+        return false; // ...end the instructions / comprehension questions / feedback loop and continue to the next section.
+    } else { // If the participant's data from the last trial was NOT labeled "correct"...
+      return true // ...continue to loop the instructions / comprehension questions // feedback.
+      }
+    }
+  };
+
+timeline.push(instructions_understood);
+
+
+			/* define instructions block */
+			var instructions_block2 = {
+			type: 'instructions',
+			pages: [
+					"<p class='center-content'> Please note that we check your data for accuracy.</p>"+
+					"<p class='center-content'> If you make random choices, or have below average performance, we have the right to <b>exclude you from all future studies by our group and/or not pay you your bonus</b>.</p>"+
+					"<p class='center-content'> We appreciate you taking the time to complete the study to the best of your ability.</p>"+
+					"<p class='center-content'> When you are ready to start the game, you can click 'Next.'</p>"
+			],
+			show_clickable_nav: true
+		};
+
+		timeline.push(instructions_block2)
+
+
+
+
+		/* define manipulation_poor block */
+		var manipulation_poor = {
+		type: 'instructions',
+		pages: [
+				"<p style='text-align:center;font-size:30px'> You've arrived in a new location!</p>"+
+				"<p style='text-align:center;font-size:30px'> You heard a rumor when you were at the saloon that the geological conditions in this territory are bad.</p>"+
+				"<p style='text-align:center;font-size:30px'> <b>It could be that this territory has a shortage of gold and more rocks.</b></p>"+
+        "<p class='center-content'><img src='img/saloon_rocks.png'></img>",
+			],
+
+		show_clickable_nav: true,
+		allow_backward: false,
+		on_start: function(){
+			document.documentElement.style.backgroundImage = "url('img/poor_territory.png')";
+			document.documentElement.style.backgroundSize = "140px 140px";
+			document.documentElement.style.backgroundRepeat = "no-repeat";
+      document.documentElement.style.backgroundPosition = "top right";
+		}
+	};
+
+	/* define manipulation_rich block */
+	var manipulation_rich = {
+	type: 'instructions',
+	pages: [
+			"<p style='text-align:center;font-size:30px'> You've arrived in a new location!</p>"+
+			"<p style='text-align:center;font-size:30px'> You heard a rumor when you were at the saloon that the geological conditions in this territory are ideal.</p>"+
+			"<p style='text-align:center;font-size:30px'> <b>It could be that this territory has an abundance of gold and fewer rocks.</b></p>"+
+      "<p class='center-content'><img src='img/saloon_gold.png'></img>",
+		],
+
+	show_clickable_nav: true,
+	allow_backward: false,
+  on_start: function(){
+    document.documentElement.style.backgroundImage = "url('img/rich_territory.png')";
+    document.documentElement.style.backgroundSize = "140px 140px";
+    document.documentElement.style.backgroundRepeat = "no-repeat";
+    document.documentElement.style.backgroundPosition = "top right";
+  }
+};
+
+
+/* define manipulation_neutral block */
+var manipulation_neutral = {
+type: 'instructions',
+pages: [
+		"<p style='text-align:center;font-size:30px'> You've arrived in a new location!</p>"+
+		"<p style='text-align:center;font-size:30px'> You heard a rumor when you were at the saloon that the geological conditions in this territory are unknown.</p>"+
+		"<p style='text-align:center;font-size:30px'> <b>It is currently unknown whether this territory has more or less of any particular type of sediment.</b></p>"+
+    "<p class='center-content'><img src='img/saloon_unknown.png'></img>",
+	],
+
+show_clickable_nav: true,
+allow_backward: false,
+on_start: function(){
+  document.documentElement.style.backgroundImage = "url('img/unknown_territory.png')";
+  document.documentElement.style.backgroundSize = "140px 140px";
+  document.documentElement.style.backgroundRepeat = "no-repeat";
+  document.documentElement.style.backgroundPosition = "top right";
+}
+};
+
+
+
+
+var ambig_pic = 'img/dirty_small.png'
+var rock_pic = 'img/rock_small.png'
+var gold_pic = 'img/gold_small.png'
+
+
+/// ------------------------------ This is Block 1 ------------------------------ ///
+
+//Load images for practice
+var preload_images2 = {
+type: "call-function",
+async: true,
+func: function(done) {
+  jsPsych.getDisplayElement().innerHTML = '<p>Loading... Please wait.</p>'
+  jsPsych.pluginAPI.preloadImages(all_images, function() {
+    done({ preload: "success" });
+  })
+}
+};
+timeline.push(preload_images2)
+
+/* choose block 1 manipulation */
+if (envir[0] == "rich"){
+	timeline.push(manipulation_rich);
+} else if (envir[0] == "poor") {
+	timeline.push(manipulation_poor);
+} else if (envir[0] == "neutral") {
+	timeline.push(manipulation_neutral);
+}
+
+
+for (var i = 0; i < n_trials_block; i++){
+
+    var initial_choice={
+        type: 'html-button-response',
+        //block_id: 'benevolent',
+        stimulus:'<img src="' + mine_image[0]  + '" /><img src="' + mine_image[1]  + '" />',
+        choices: ['Dig Here','Dig Here'],
+        margin_horizontal: '150px',
+        prompt: "<p class='center-content'><b>Choose a mine</b><BR>",
+        timing_post_trial: 0,
+            data: {
+              task_component: 'choice',
+              block: 1,
+              exp_condition: envir[0]
+                  }
+
+        };
+
+
+      var trial_outcome={
+        type: 'html-button-response-hd',
+        choices: ['Rocks','Gold'],
+        prompt: "<p class='center-content'><b>Do you think that this outcome is ROCKS or GOLD?</b><BR>",
+        stimulus: '<img src="' + mine_image[0]  + '" /><img src="' + mine_image[1]  + '" />',
+        gold_image: gold_pic,
+        rock_image: rock_pic,
+        dirty_image: ambig_pic,
+        latent_intervention: feedback_type_b1[i],
+        true_feedback_L: feedback_magnitude_b1_arm1_sign[i],
+        true_feedback_R: feedback_magnitude_b1_arm2_sign[i],
+        magnitude_L: feedback_magnitude_b1_arm1a[i],
+        magnitude_R: feedback_magnitude_b1_arm2a[i],
+        data: {
+          task_component: 'feedback',
+          block: 1,
+          exp_condition: envir[0],
+          mean_left: means[0],
+          mean_right: means[1],
+          // mean_left: mean1,
+          // mean_right: mean4,
+          sd: stddev
+
+        }
+
+          };
+
+					timeline.push(initial_choice);
+					timeline.push(trial_outcome);
+
+
+        };
+
+
+    /// ------------------------------ This is Block 2 ------------------------------ ///
+
+    //Load images for practice
+    var preload_images3 = {
+    type: "call-function",
+    async: true,
+    func: function(done) {
+      jsPsych.getDisplayElement().innerHTML = '<p>Loading... Please wait.</p>'
+      jsPsych.pluginAPI.preloadImages(all_images, function() {
+        done({ preload: "success" });
+      })
+    }
+  };
+    timeline.push(preload_images3)
+
+    /* choose block 1 manipulation */
+    if (envir[1] == "rich"){
+    	timeline.push(manipulation_rich);
+    } else if (envir[1] == "poor") {
+    	timeline.push(manipulation_poor);
+    } else if (envir[1] == "neutral") {
+    	timeline.push(manipulation_neutral);
+    }
+
+
+
+  for (var i = 0; i < n_trials_block; i++){
+
+      var initial_choice={
+          type: 'html-button-response',
+          stimulus:'<img src="' + mine_image[2]  + '" /><img src="' + mine_image[3]  + '" />',
+          choices: ['Dig Here','Dig Here'],
+          margin_horizontal: '150px',
+          prompt: "<p class='center-content'><b>Choose a mine</b><BR>",
+          timing_post_trial: 0,
+          screen_color: function(){
+            document.documentElement.style.background = "White";
+          },
+              data: {
+                task_component: 'choice',
+                block: 2,
+                exp_condition: envir[1]
+                    }
+
+          };
+
+
+        var trial_outcome={
+          type: 'html-button-response-hd',
+          choices: ['Rocks','Gold'],
+          prompt: "<p class='center-content'><b>Do you think that this outcome is ROCKS or GOLD?</b><BR>",
+          stimulus: '<img src="' + mine_image[2]  + '" /><img src="' + mine_image[3]  + '" />',
+          gold_image: gold_pic,
+          rock_image: rock_pic,
+          dirty_image: ambig_pic,
+          latent_intervention: feedback_type_b2[i],
+          true_feedback_L: feedback_magnitude_b2_arm1_sign[i],
+          true_feedback_R: feedback_magnitude_b2_arm2_sign[i],
+          magnitude_L: feedback_magnitude_b2_arm1a[i],
+          magnitude_R: feedback_magnitude_b2_arm2a[i],
+          data: {
+            task_component: 'feedback',
+            block: 2,
+            exp_condition: envir[1],
+            mean_left: means[1],
+            mean_right: means[0],
+            // mean_left: mean2,
+            // mean_right: mean5,
+            sd: stddev
+                }
+                  };
+
+  					timeline.push(initial_choice);
+  					timeline.push(trial_outcome);
+
+          };
+
+
+      /// ------------------------------ This is Block 3 ------------------------------ ///
+
+      /* choose block 1 manipulation */
+      if (envir[2] == "rich"){
+      	timeline.push(manipulation_rich);
+      } else if (envir[2] == "poor") {
+      	timeline.push(manipulation_poor);
+      } else if (envir[2] == "neutral") {
+      	timeline.push(manipulation_neutral);
+      }
+
+
+
+    for (var i = 0; i < n_trials_block; i++){
+
+        var initial_choice={
+            type: 'html-button-response',
+            stimulus:'<img src="' + mine_image[4]  + '" /><img src="' + mine_image[5]  + '" />',
+            choices: ['Dig Here','Dig Here'],
+            margin_horizontal: '150px',
+            prompt: "<p class='center-content'><b>Choose a mine</b><BR>",
+            timing_post_trial: 0,
+            screen_color: function(){
+              document.documentElement.style.background = "White";
+            },
+                data: {
+                  task_component: 'choice',
+                  block: 3,
+                  exp_condition: envir[2]
+                      }
+
+            };
+
+
+          var trial_outcome={
+            type: 'html-button-response-hd',
+            choices: ['Rocks','Gold'],
+            prompt: "<p class='center-content'><b>Do you think that this outcome is ROCKS or GOLD?</b><BR>",
+            stimulus: '<img src="' + mine_image[4]  + '" /><img src="' + mine_image[5]  + '" />',
+            gold_image: gold_pic,
+            rock_image: rock_pic,
+            dirty_image: ambig_pic,
+            latent_intervention: feedback_type_b3[i],
+            true_feedback_L: feedback_magnitude_b3_arm1_sign[i],
+            true_feedback_R: feedback_magnitude_b3_arm2_sign[i],
+            magnitude_L: feedback_magnitude_b3_arm1a[i],
+            magnitude_R: feedback_magnitude_b3_arm2a[i],
+            data: {
+              task_component: 'feedback',
+              block: 3,
+              exp_condition: envir[2],
+              mean_left: means[0],
+              mean_right: means[1],
+              // mean_left: mean3,
+              // mean_right: mean6,
+              sd: stddev
+                  }
+                    };
+
+
+    					timeline.push(initial_choice);
+    					timeline.push(trial_outcome);
+
+            };
+
+            /// ------------------------------ This is Block 4 ------------------------------ ///
+
+            //Load images for practice
+            var preload_images4 = {
+            type: "call-function",
+            async: true,
+            func: function(done) {
+              jsPsych.getDisplayElement().innerHTML = '<p>Loading... Please wait.</p>'
+              jsPsych.pluginAPI.preloadImages(all_images, function() {
+                done({ preload: "success" });
+              })
+            }
+            };
+            timeline.push(preload_images4)
+
+            /* choose block 1 manipulation */
+            if (envir[3] == "rich"){
+            	timeline.push(manipulation_rich);
+            } else if (envir[3] == "poor") {
+            	timeline.push(manipulation_poor);
+            } else if (envir[3] == "neutral") {
+            	timeline.push(manipulation_neutral);
+            }
+
+
+            for (var i = 0; i < n_trials_block; i++){
+
+                var initial_choice={
+                    type: 'html-button-response',
+                    //block_id: 'benevolent',
+                    stimulus:'<img src="' + mine_image[6]  + '" /><img src="' + mine_image[7]  + '" />',
+                    choices: ['Dig Here','Dig Here'],
+                    margin_horizontal: '150px',
+                    prompt: "<p class='center-content'><b>Choose a mine</b><BR>",
+                    timing_post_trial: 0,
+                        data: {
+                          task_component: 'choice',
+                          block: 4,
+                          exp_condition: envir[3]
+                              }
+
+                    };
+
+
+                  var trial_outcome={
+                    type: 'html-button-response-hd',
+                    choices: ['Rocks','Gold'],
+                    prompt: "<p class='center-content'><b>Do you think that this outcome is ROCKS or GOLD?</b><BR>",
+                    stimulus: '<img src="' + mine_image[6]  + '" /><img src="' + mine_image[7]  + '" />',
+                    gold_image: gold_pic,
+                    rock_image: rock_pic,
+                    dirty_image: ambig_pic,
+                    latent_intervention: feedback_type_b4[i],
+                    true_feedback_L: feedback_magnitude_b4_arm1_sign[i],
+                    true_feedback_R: feedback_magnitude_b4_arm2_sign[i],
+                    magnitude_L: feedback_magnitude_b4_arm1a[i],
+                    magnitude_R: feedback_magnitude_b4_arm2a[i],
+                    data: {
+                      task_component: 'feedback',
+                      block: 4,
+                      exp_condition: envir[3],
+                      mean_left: means[0],
+                      mean_right: means[1],
+                      // mean_left: mean1,
+                      // mean_right: mean4,
+                      sd: stddev
+
+                    }
+
+                      };
+
+            					timeline.push(initial_choice);
+            					timeline.push(trial_outcome);
+
+
+                    };
+
+                    /// ------------------------------ This is Block 5 ------------------------------ ///
+
+                    //Load images for practice
+                    var preload_images5 = {
+                    type: "call-function",
+                    async: true,
+                    func: function(done) {
+                      jsPsych.getDisplayElement().innerHTML = '<p>Loading... Please wait.</p>'
+                      jsPsych.pluginAPI.preloadImages(all_images, function() {
+                        done({ preload: "success" });
+                      })
+                    }
+                    };
+                    timeline.push(preload_images5)
+
+                    /* choose block 1 manipulation */
+                    if (envir[4] == "rich"){
+                    	timeline.push(manipulation_rich);
+                    } else if (envir[4] == "poor") {
+                    	timeline.push(manipulation_poor);
+                    } else if (envir[4] == "neutral") {
+                    	timeline.push(manipulation_neutral);
+                    }
+
+
+                    for (var i = 0; i < n_trials_block; i++){
+
+                        var initial_choice={
+                            type: 'html-button-response',
+                            //block_id: 'benevolent',
+                            stimulus:'<img src="' + mine_image[8]  + '" /><img src="' + mine_image[9]  + '" />',
+                            choices: ['Dig Here','Dig Here'],
+                            margin_horizontal: '150px',
+                            prompt: "<p class='center-content'><b>Choose a mine</b><BR>",
+                            timing_post_trial: 0,
+                                data: {
+                                  task_component: 'choice',
+                                  block: 5,
+                                  exp_condition: envir[4]
+                                      }
+
+                            };
+
+
+                          var trial_outcome={
+                            type: 'html-button-response-hd',
+                            choices: ['Rocks','Gold'],
+                            prompt: "<p class='center-content'><b>Do you think that this outcome is ROCKS or GOLD?</b><BR>",
+                            stimulus: '<img src="' + mine_image[8]  + '" /><img src="' + mine_image[9]  + '" />',
+                            gold_image: gold_pic,
+                            rock_image: rock_pic,
+                            dirty_image: ambig_pic,
+                            latent_intervention: feedback_type_b5[i],
+                            true_feedback_L: feedback_magnitude_b5_arm1_sign[i],
+                            true_feedback_R: feedback_magnitude_b5_arm2_sign[i],
+                            magnitude_L: feedback_magnitude_b5_arm1a[i],
+                            magnitude_R: feedback_magnitude_b5_arm2a[i],
+                            data: {
+                              task_component: 'feedback',
+                              block: 5,
+                              exp_condition: envir[4],
+                              mean_left: means[1],
+                              mean_right: means[0],
+                              // mean_left: mean1,
+                              // mean_right: mean4,
+                              sd: stddev
+
+                            }
+
+                              };
+
+                    					timeline.push(initial_choice);
+                    					timeline.push(trial_outcome);
+
+
+                            };
+
+
+                            /// ------------------------------ This is Block 6 ------------------------------ ///
+
+                            //Load images for practice
+                            var preload_images6 = {
+                            type: "call-function",
+                            async: true,
+                            func: function(done) {
+                              jsPsych.getDisplayElement().innerHTML = '<p>Loading... Please wait.</p>'
+                              jsPsych.pluginAPI.preloadImages(all_images, function() {
+                                done({ preload: "success" });
+                              })
+                            }
+                            };
+                            timeline.push(preload_images6)
+
+                            /* choose block 1 manipulation */
+                            if (envir[5] == "rich"){
+                            	timeline.push(manipulation_rich);
+                            } else if (envir[5] == "poor") {
+                            	timeline.push(manipulation_poor);
+                            } else if (envir[5] == "neutral") {
+                            	timeline.push(manipulation_neutral);
+                            }
+
+
+                            for (var i = 0; i < n_trials_block; i++){
+
+                                var initial_choice={
+                                    type: 'html-button-response',
+                                    //block_id: 'benevolent',
+                                    stimulus:'<img src="' + mine_image[10]  + '" /><img src="' + mine_image[11]  + '" />',
+                                    choices: ['Dig Here','Dig Here'],
+                                    margin_horizontal: '150px',
+                                    prompt: "<p class='center-content'><b>Choose a mine</b><BR>",
+                                    timing_post_trial: 0,
+                                        data: {
+                                          task_component: 'choice',
+                                          block: 6,
+                                          exp_condition: envir[5]
+                                              }
+
+                                    };
+
+
+                                  var trial_outcome={
+                                    type: 'html-button-response-hd',
+                                    choices: ['Rocks','Gold'],
+                                    prompt: "<p class='center-content'><b>Do you think that this outcome is ROCKS or GOLD?</b><BR>",
+                                    stimulus: '<img src="' + mine_image[10]  + '" /><img src="' + mine_image[11]  + '" />',
+                                    gold_image: gold_pic,
+                                    rock_image: rock_pic,
+                                    dirty_image: ambig_pic,
+                                    latent_intervention: feedback_type_b6[i],
+                                    true_feedback_L: feedback_magnitude_b6_arm1_sign[i],
+                                    true_feedback_R: feedback_magnitude_b6_arm2_sign[i],
+                                    magnitude_L: feedback_magnitude_b6_arm1a[i],
+                                    magnitude_R: feedback_magnitude_b6_arm2a[i],
+                                    data: {
+                                      task_component: 'feedback',
+                                      block: 6,
+                                      exp_condition: envir[5],
+                                      mean_left: means[0],
+                                      mean_right: means[1],
+                                      // mean_left: mean1,
+                                      // mean_right: mean4,
+                                      sd: stddev
+
+                                    }
+
+                                      };
+
+                            					timeline.push(initial_choice);
+                            					timeline.push(trial_outcome);
+
+
+                                    };
+
+
+         var bonus_block = {
+           type: 'instructions',
+           data: {task_component: 'bonus'},
+           pages: function() {
+             //var correct_bonus = Math.round(100 * jsPsych.data.get().filter({correct: true}).count() / (num_blocks * 2 * num_trials_per_stim + 2)); // Includes practices (+2)
+             //var correct_bonus = Math.round(jsPsych.data.get().select('data.feedback').sum()/400); // Includes practices (+2)
+             var adjusted_bonus = jsPsych.data.get().filter({task_component: 'feedback'}).select('feedback').sum()/800;
+             var correct_bonus = 2 + Number(adjusted_bonus.toFixed(2));
+             //console.log(adjusted_bonus);
+             //console.log(correct_bonus);
+             jsPsych.data.addDataToLastTrial({"bonus": correct_bonus});
+             // return ['<p class="center-content">You won a bonus of <b>$' + (correct_bonus == 100 ? '1.00' : '0.' + correct_bonus) + '</b>.</p>' +
+             //   '<p class="center-content"> IMPORTANT: <b>Press "Next"</b> to continue to the survey questions.</p>'];
+             return ['<p class="center-content">You won a bonus of <b>$' + (correct_bonus) + '</b>.</p>' +
+               '<p class="center-content"> IMPORTANT: <b>Press "Next"</b> to continue.</p>']; //this is temporary to see what the average points are!
+           },
+           show_clickable_nav: true,
+           screen_color: function(){
+             document.documentElement.style.background = "White";
+           }
+         }
+         timeline.push(bonus_block);
+
+
+
+        //Use this when collecting from mturk
+         var turkInfo = jsPsych.turk.turkInfo();
+         jsPsych.data.addProperties({
+           assignmentID: turkInfo.assignmentId
+         });
+         jsPsych.data.addProperties({
+           mturkID: turkInfo.workerId
+         });
+         jsPsych.data.addProperties({
+           hitID: turkInfo.hitId
+         });
+
+
+         //use this when collecting from prolific
+         // capture info from Prolific
+          // var prolific_id = jsPsych.data.getURLVariable('PROLIFIC_PID');
+          // var study_id = jsPsych.data.getURLVariable('STUDY_ID');
+          // var session_id = jsPsych.data.getURLVariable('SESSION_ID');
+          //
+          // jsPsych.data.addProperties({
+          //   prolific_id: prolific_id,
+          //   study_id: study_id,
+          //   session_id: session_id
+          // });
+
+         //uncomment to transfer them to the qualtrics surveys
+
+         //for mturk studies
+         var urlVar = jsPsych.data.urlVariables();
+         var keyLink = "https://harvard.az1.qualtrics.com/jfe/form/SV_9QQsDRv05Yms82W/?&workerId=" + turkInfo.workerId + "&assignmentId=" + turkInfo.assignmentId + "&hitId=" + turkInfo.hitId + "&a=" + urlVar.a + "&b=" + urlVar.b + "&c=" + urlVar.c
+         //var keyLink = "https://harvard.az1.qualtrics.com/jfe/form/SV_9QQsDRv05Yms82W/?&workerId=" + "&a=" + urlVar.a + "&b=" + urlVar.b + "&c=" + urlVar.c
+
+         //for prolific studies
+        // var keyLink = "https://harvard.az1.qualtrics.com/jfe/form/SV_9pEHrrLrhM2wiEK/?&PROLIFIC_PID=" + prolific_id + "&STUDY_ID=" + study_id + "&SESSION_ID=" + session_id
+
+         /* grab data before the end of the experiment */
+
+         var delayitem = {
+           type: 'instructions',
+           pages: [
+             // Delay (page 1)
+             '<p class="center-content">Click to continue to Part 2 of the experiment.</p>',
+           ],
+           show_clickable_nav: true,
+           allow_backward: false,
+           show_page_number: false
+         };
+
+
+         timeline.push(delayitem);
+
+
+
+      // Add information to data
+      var subject_id =  jsPsych.randomization.randomID(8); // Random subject ID
+      jsPsych.data.addProperties({
+        subject_id: subject_id
+      });
+
+      // Add information to data
+      var task_version =  "pilot_16"
+      jsPsych.data.addProperties({
+        task_version: task_version
+      });
+
+      // Add information to data
+      var ambig_version =  ".50"
+      jsPsych.data.addProperties({
+        ambig_version: ambig_version
+      });
+
+
+
+
+            /* start the experiment */
+            jsPsych.init({
+              timeline: timeline,
+              on_finish: function() { window.location.href = keyLink; } //change this to go to the qualtrics survey
+            });
+
+          </script>
+        </html>
